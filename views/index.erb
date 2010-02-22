@@ -1,0 +1,22 @@
+<% if @messages.empty? %>
+  <div class="message">
+    hmmm... nothing yet
+  </div>
+<% end %>
+
+<% @messages.each do |msg| %>
+  <div class="message">
+    <p>
+      <a class="nick" href="/users/<%= msg[0].downcase.gsub(' ','_') %>">
+      <%= msg[0] %></a>: <%= auto_link msg[1] %>
+    </p>
+  </div>
+<% end %>
+
+<% if @tags %>
+  <div id="tags">
+    <% @tags.each do |tag| %>
+      <div class="tag"><%= auto_link tag %></div>
+    <% end %>
+  </div>
+<% end %>
