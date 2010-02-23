@@ -8,15 +8,9 @@ require 'sinatra'
 require 'redis'
 require 'erb'
 require 'active_support'
+require 'pocho/time'
 
 include ERB::Util
-
-# Time class extended
-class Time
-  def year ; strftime('%Y'); end
-  def month; strftime('%m'); end
-  def day  ; strftime('%d'); end
-end
 
 # Redis
 set :redis, Redis.new         # Redis connection

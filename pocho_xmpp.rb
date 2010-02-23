@@ -5,13 +5,7 @@ require 'redis'
 require 'xmpp4r'
 require 'xmpp4r-simple'
 require 'xmpp4r/muc/helper/simplemucclient'
-
-# Time class extended
-class Time
-  def year ; strftime('%Y'); end
-  def month; strftime('%m'); end
-  def day  ; strftime('%d'); end
-end
+require 'pocho/time'
 
 # Pocho The Robot
 class PochoTheRobot
@@ -47,14 +41,14 @@ class PochoTheRobot
   end
 
   private
-  
+
   def parse_and_store nick, msg, time
     logger.debug "[Pocho] Processing: #{nick.inspect} - #{msg.inspect}"
 
-    tags = msg.strip.scan(/#\w+/) 
+    tags = msg.strip.scan(/#\w+/)
     if tags.any?
       tuple = Marshal.dump([nick, msg])
-      tags.each do |tag| 
+      tags.each do |tag|
         @redis.push_head "#{@ns}:tag:#{tag}", tuple
         @redis.set_add "#{@ns}:tags", tag
       end
