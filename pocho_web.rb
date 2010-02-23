@@ -1,3 +1,8 @@
+#!/usr/bin/env ruby
+
+# Bundler
+require File.expand_path('../.bundle/environment', __FILE__)
+
 require 'rubygems'
 require 'sinatra'
 require 'redis'
@@ -15,7 +20,7 @@ end
 
 # Redis
 set :redis, Redis.new         # Redis connection
-set :ns, 'nb-mpompilio.local' # Redis namespace
+set :ns, 'xmpp.example.com' # Redis namespace
 
 # Helpers
 helpers do

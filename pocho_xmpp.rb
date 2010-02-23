@@ -1,4 +1,6 @@
-#!/usr/bin/env ruby
+# Bundler
+require File.expand_path('../.bundle/environment', __FILE__)
+
 require 'redis'
 require 'xmpp4r'
 require 'xmpp4r-simple'
@@ -69,7 +71,3 @@ class PochoTheRobot
       logger.error e.backtrace
   end
 end
-
-#p = PochoTheRobot.new 'pocho@nb-mpompilio.local', 'p0ch0', ['xmppfoo@conference.nb-mpompilio.local','xmppbar@conference.nb-mpompilio.local']
-#p.connect!
-
