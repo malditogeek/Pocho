@@ -1,0 +1,6 @@
+---
+:user: pocho@xmpp.example.com
+:password: s3cr3t!
+:rooms:
+- room1@conference.xmpp.example.com
+- room2@conference.xmpp.example.com
