@@ -23,7 +23,7 @@ helpers do
     t.scan(/#\w+/).each do |tag|
       t = t.gsub tag, "<a href='/tags/#{tag.gsub('#','')}'>#{tag}</a>"
     end
-    t = t.gsub /((https?:\/\/|www\.)([-\w\.]+)+(:\d+)?(\/([\w\/_\.]*(\?\S+)?)?)?)/, %Q{<a href="\\1" target="_blank">\\1</a>}
+    t = t.gsub /((https?:\/\/|www\.)([-\w\.]+)+(:\d+)?(\/([\w\/_\.-]*(\?\S+)?)?)?)/, %Q{<a href="\\1" target="_blank">\\1</a>}
     t
   end
 end
@@ -62,7 +62,7 @@ end
 
 get '/users/:user' do
   user = params[:user]
-  @title = user.split('_').first.camelize
+  @title = user.split(/_|\./).first.camelize
   @messages = find_msgs "#{options.ns}:#{user}"
   erb :index
 end
