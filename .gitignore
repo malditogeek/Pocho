@@ -3,4 +3,5 @@ vendor/*
 tmp/*
 log/*
 .bundle
+config.yml
 Gemfile.lock
