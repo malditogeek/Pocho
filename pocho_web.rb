@@ -1,69 +1,66 @@
 #!/usr/bin/env ruby
+require 'yaml'
+begin
+  config = YAML.load_file('config.yml')
+rescue Errno::ENOENT
+  puts 'No config.yml file found, which is needed to run this script. You can copy config.yml.example as a starting point.'
+  Process.exit
+end
 
 # Bundler
 require File.expand_path('../.bundle/environment', __FILE__)
-
 require 'rubygems'
 require 'sinatra'
-require 'redis'
 require 'erb'
 require 'active_support'
-require 'pocho/time'
 
 include ERB::Util
 
-# Redis
-set :redis, Redis.new         # Redis connection
-set :ns, 'xmpp.example.com' # Redis namespace
+# Redis is the default datastore, but you can implement your own! 
+# Take a look at 'pocho/datastores/dummy' to get started.
+DATASTORE = :redis 
+require "pocho/datastores/#{DATASTORE}"
+require 'pocho/time'
+require 'pocho/helpers'
 
-# Helpers
-helpers do
-  def auto_link(text)
-    t = html_escape(text)
-    t.scan(/#\w+/).each do |tag|
-      t = t.gsub tag, "<a href='/tags/#{tag.gsub('#','')}'>#{tag}</a>"
-    end
-    t = t.gsub /((https?:\/\/|www\.)([-\w\.]+)+(:\d+)?(\/([\w\/_\.-]*(\?\S+)?)?)?)/, %Q{<a href="\\1" target="_blank">\\1</a>}
-    t
-  end
-end
+set :public, File.expand_path(File.dirname(__FILE__) + '/public')
+set :views , File.expand_path(File.dirname(__FILE__) + '/views') 
 
-def find_msgs key
-  options.redis.list_range(key, 0, -1).map {|m| Marshal.load(m)}
-end
-
-def find_tags
-  options.redis.set_members "#{options.ns}:tags"
+configure do
+  DS = DataStore.new config[:user].split('@').last
 end
 
 # Sinatra songs
+
+# Today messages
 get '/' do
-  @title = "What's up?"
-  t = Time.now
-  @messages = find_msgs "#{options.ns}:timeline:#{t.year}:#{t.month}:#{t.day}"
-  @tags = find_tags
+  @title    = "What's up?"
+  @messages = DS.find_today_messages
+  @tags     = DS.find_all_tags
   erb :index
 end
 
+# Messages by tag
+get '/tags/:tag' do
+  tag       = params[:tag]
+  @title    = "##{tag}"
+  @messages = DS.find_messages_by_tag tag
+  erb :index
+end
+
+# Messages by user
+get '/users/:user' do
+  user      = params[:user]
+  @title    = user.split(/_|\./).first.camelize
+  @messages = DS.find_messages_by_user user
+  erb :index
+end
+
+# Messages by date
 get '/:year/:month/:day' do
   y, m, d = params[:year], params[:month], params[:day]
-  @title = "#{y}/#{m}/#{d}"
-  @messages = find_msgs "#{options.ns}:timeline:#{y}:#{m}:#{d}"
-  @tags = find_tags
-  erb :index
-end
-
-get '/tags/:tag' do
-  tag = params[:tag]
-  @title = "##{tag}"
-  @messages = find_msgs "#{options.ns}:tag:##{tag}"
-  erb :index
-end
-
-get '/users/:user' do
-  user = params[:user]
-  @title = user.split(/_|\./).first.camelize
-  @messages = find_msgs "#{options.ns}:#{user}"
+  @title    = "#{y}/#{m}/#{d}"
+  @messages = DS.find_messages_by_date y,m,d
   erb :index
 end
 

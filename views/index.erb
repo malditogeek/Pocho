@@ -7,8 +7,7 @@
 <% @messages.each do |msg| %>
   <div class="message">
     <p>
-      <a class="nick" href="/users/<%= msg[0].downcase.gsub(' ','_') %>">
-      <%= msg[0] %></a>: <%= auto_link msg[1] %>
+      <a class="nick" href="/users/<%= sanitize msg[0]  %>"><%= msg[0] %></a>: <%= auto_link msg[1] %>
     </p>
   </div>
 <% end %>

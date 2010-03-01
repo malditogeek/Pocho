@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 
 require 'yaml'
-require File.dirname(File.expand_path(__FILE__)) + '/pocho_xmpp'
+require File.expand_path('../pocho_xmpp', __FILE__)
 
 begin
-  YAML.load_file('config.yml')
+  config = YAML.load_file(File.expand_path('../config.yml',__FILE__))
+
 rescue Errno::ENOENT
   puts 'No config.yml file found, which is needed to run this script. You can copy config.yml.example as a starting point.'
   Process.exit
