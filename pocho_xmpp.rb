@@ -6,7 +6,7 @@ require 'xmpp4r/muc/helper/simplemucclient'
 
 # Redis is the default datastore, but you can implement your own! 
 # Take a look at 'pocho/datastores/dummy' to get started.
-DATASTORE = :redis 
+DATASTORE = :redis
 require File.expand_path("../pocho/datastores/#{DATASTORE}", __FILE__)
 require File.expand_path('../pocho/time', __FILE__)
 
@@ -15,17 +15,18 @@ class PochoTheRobot
   attr_accessor :ns
 
   # Intitialization and Jabber authentication.
-  def initialize jid, passwd, rooms=[]
+  def initialize options = {}
     @logger = Logger.new(File.expand_path("../log/pocho_xmpp.log", __FILE__))
 
     @logger.level = ENV['DEBUG'] ? Logger::DEBUG : Logger::INFO
-
+    jid = options[:user]
     @ns = jid.split('@').last # Namespace
     @ds = DataStore.new @ns
 
     logger.info "[Pocho] Connecting #{jid}"
-    @pocho = Jabber::Simple.new(jid, passwd)
-    @rooms = rooms # MUC rooms
+    @pocho = Jabber::Simple.new(jid, options[:password])
+    @rooms = options[:rooms] # MUC rooms
+    @notify_with = options[:notify_with]
   end
 
   # Connect to all the rooms and wait for messages.
@@ -35,7 +36,7 @@ class PochoTheRobot
         muc = Jabber::MUC::SimpleMUCClient.new(@pocho.client)
         muc.on_message do |time,user,msg|
           m = parse_and_store(user, msg, Time.now) unless time # Avoid msg history
-          #muc.say "#{user}: gotcha ;)" if m
+          notify(muc, user) if m && @notify_with
         end
         muc.join("#{room}/Pocho The Robot")
       end
@@ -46,6 +47,16 @@ class PochoTheRobot
   end
 
   private
+
+  def notify(muc, user)
+    sentence = "gotcha ;)"
+    case @notify_with.to_sym
+    when :whisper
+      muc.say(sentence, user)
+    when :shout
+      muc.say("#{user}: #{sentence}")
+    end
+  end
 
   # Parse the message looking for #hashtags, if there's any, it'll be stored.
   def parse_and_store user, msg, time

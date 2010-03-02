@@ -11,5 +11,5 @@ rescue Errno::ENOENT
   Process.exit
 end
 
-bot = PochoTheRobot.new config[:user], config[:password], config[:rooms]
+bot = PochoTheRobot.new config
 bot.connect!

@@ -4,3 +4,4 @@
 :rooms:
 - room1@conference.xmpp.example.com
 - room2@conference.xmpp.example.com
+:notify_with: whisper
