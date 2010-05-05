@@ -27,6 +27,7 @@ class PochoTheRobot
     @pocho = Jabber::Simple.new(jid, options[:password])
     @rooms = options[:rooms] # MUC rooms
     @notify_with = options[:notify_with]
+    @pocho_web = options[:pocho_web]
   end
 
   # Connect to all the rooms and wait for messages.
@@ -36,7 +37,7 @@ class PochoTheRobot
         muc = Jabber::MUC::SimpleMUCClient.new(@pocho.client)
         muc.on_message do |time,user,msg|
           m = parse_and_store(user, msg, Time.now) unless time # Avoid msg history
-          notify(muc, user) if m && @notify_with
+          notify(muc, user) if (m && @notify_with)
         end
         muc.join("#{room}/Pocho The Robot")
       end
@@ -49,7 +50,7 @@ class PochoTheRobot
   private
 
   def notify(muc, user)
-    sentence = "gotcha ;)"
+    sentence = "Got it! Check it out here: #{@pocho_web}"
     case @notify_with.to_sym
     when :whisper
       muc.say(sentence, user)

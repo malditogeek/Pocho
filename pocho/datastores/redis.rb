@@ -30,25 +30,25 @@ class DataStore
   # STORE
   def store_message_by_tag tuple, tag
     tag = tag.downcase
-    @redis.push_head "#{@ns}:tag:#{tag}", tuple
+    @redis.lpush "#{@ns}:tag:#{tag}", tuple
   end
   def store_tag tag
-    @redis.set_add "#{@ns}:tags", tag
+    @redis.sadd "#{@ns}:tags", tag
   end
   def store_message_by_date tuple, time
-    @redis.push_head "#{@ns}:timeline:#{time.year}:#{time.month}:#{time.day}", tuple
+    @redis.lpush "#{@ns}:timeline:#{time.year}:#{time.month}:#{time.day}", tuple
   end
   def store_message_by_user tuple, user
     user = user.downcase.gsub(' ','_')
-    @redis.push_head "#{@ns}:#{user}", tuple
+    @redis.lpush "#{@ns}:#{user}", tuple
   end
 
   private
   def get_list key
-    @redis.list_range(key, 0, -1).map {|m| Marshal.load(m)}
+    @redis.lrange(key, 0, -1).map {|m| Marshal.load(m)}
   end
   def get_set key 
-    @redis.set_members key
+    @redis.smembers key
   end
 end
 

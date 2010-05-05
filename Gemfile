@@ -6,6 +6,7 @@ gem 'redis'
 gem 'xmpp4r'
 gem 'xmpp4r-simple'
 gem 'daemons'
+gem 'thin'
 
 group :development do
   gem 'ruby-debug'

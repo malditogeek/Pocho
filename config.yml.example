@@ -5,3 +5,4 @@
 - room1@conference.xmpp.example.com
 - room2@conference.xmpp.example.com
 :notify_with: whisper
+:pocho_web: 'http://pocho.example.com'
