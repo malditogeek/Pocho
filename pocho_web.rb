@@ -36,7 +36,7 @@ end
 get '/' do
   @title    = "What's up?"
   @messages = DS.find_today_messages
-  @tags     = DS.find_all_tags
+  @tags     = DS.find_all_tags.map(&:downcase).sort
   erb :index
 end
 

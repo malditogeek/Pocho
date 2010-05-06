@@ -64,7 +64,7 @@ class PochoTheRobot
     logger.debug "[Pocho] Processing: #{user.inspect} - #{msg.inspect}"
 
     msg = msg.strip
-    tags = msg.scan(/ #[\w-]+/).map(&:strip)
+    tags = msg.scan(/ #[\w-]+/).map {|t| t.strip}
     if tags.any?
       tuple = Marshal.dump([user, msg, time])
       tags.each do |tag|
