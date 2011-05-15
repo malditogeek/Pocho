@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
-# Bundler
-require File.expand_path('../.bundle/environment', __FILE__)
+require 'rubygems'
+require 'bundler'
+Bundler.setup
+Bundler.require
 
 require 'sinatra'
 

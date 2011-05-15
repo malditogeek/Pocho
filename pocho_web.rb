@@ -8,11 +8,12 @@ rescue Errno::ENOENT
 end
 
 # Bundler
-require File.expand_path('../.bundle/environment', __FILE__)
 require 'rubygems'
-require 'sinatra'
+require 'bundler'
+Bundler.setup
+Bundler.require
+
 require 'erb'
-require 'active_support'
 
 include ERB::Util
 

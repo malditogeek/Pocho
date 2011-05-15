@@ -1,4 +1,4 @@
-source :gemcutter
+source :rubygems
 
 gem 'sinatra'
 gem 'activesupport', :require => 'active_support'
